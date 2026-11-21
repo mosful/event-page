@@ -58,6 +58,13 @@ ol.sched b{color:var(--primary);width:56px;flex:none}
 .faq details[open] summary::after{content:"−"}
 .faq p{margin:0 0 16px;color:var(--muted)}
 footer{border-top:1px solid var(--border);padding:40px 0;text-align:center;font-size:14px;color:var(--muted)}
+footer a{color:var(--primary);font-weight:600;text-underline-offset:4px}
+.to-top{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));z-index:20;display:flex;align-items:center;justify-content:center;gap:6px;min-width:48px;height:48px;padding:0 16px;border:0;border-radius:999px;background:var(--primary);color:var(--primary-fg);font:inherit;font-size:15px;font-weight:600;cursor:pointer;box-shadow:var(--shadow);opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .2s,transform .2s,visibility .2s}
+.to-top.show{opacity:1;visibility:visible;transform:none}
+.to-top:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+@media (max-width:600px){.to-top{width:48px;padding:0}.to-top .label{display:none}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.to-top{transition:none}}
+@media print{.to-top{display:none}}
 @media (max-width:720px){
  .toggle{display:block}
  .menu{display:none;position:absolute;top:56px;left:0;right:0;flex-direction:column;gap:0;background:var(--bg);border-bottom:1px solid var(--border);padding:8px 24px}
@@ -165,7 +172,8 @@ footer{border-top:1px solid var(--border);padding:40px 0;text-align:center;font-
   </div>
  </section>
 </main>
-<footer>本頁面為虛構教學活動示範，所有資訊僅供學習使用。</footer>
+<footer>本頁面為虛構教學活動示範，所有資訊僅供學習使用 | <a href="https://ai.mzoo.cc/course/">前往實作教學網站</a>。</footer>
+<button type="button" class="to-top" aria-label="回到頁首"><span aria-hidden="true">↑</span><span class="label">回到頁首</span></button>
 <script>
 (function(){
  var t=document.querySelector('.toggle'),m=document.querySelector('.menu');
@@ -183,6 +191,11 @@ footer{border-top:1px solid var(--border);padding:40px 0;text-align:center;font-
  boxes.forEach(function(b){b.checked=!!saved[b.dataset.k];b.addEventListener('change',update);});
  document.getElementById('reset').addEventListener('click',function(){boxes.forEach(function(b){b.checked=false;});update();});
  update();
+ // 回到頁首：捲動超過門檻才顯示，點擊後回到頁首並把焦點移回頁首區塊
+ var top=document.querySelector('.to-top'),head=document.getElementById('top');
+ function sync(){top.classList.toggle('show',scrollY>Math.max(40,Math.min(400,(document.documentElement.scrollHeight-innerHeight)/2)));}
+ addEventListener('scroll',sync,{passive:true});sync();
+ top.addEventListener('click',function(){scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});head.setAttribute('tabindex','-1');head.focus({preventScroll:true});});
 })();
 </script>
 </body>
